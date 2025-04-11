@@ -2,13 +2,13 @@ use crate::polysolver::{solve_quadratic, solve_quartic};
 
 const THRESHOLD: f64 = 1e-10;
 
-enum StabilityResult {
+pub enum StabilityResult {
     Stable,
     Violated1([f64; 3]),
     Violated2([f64; 3], [f64; 3])
 }
 
-fn stab1vev(a: f64) -> StabilityResult {
+pub fn stab1vev(a: f64) -> StabilityResult {
     if a > 0. {
         StabilityResult::Stable
     } else {
@@ -16,7 +16,7 @@ fn stab1vev(a: f64) -> StabilityResult {
     }
 }
 
-fn stab2vev(a0: f64, a1: f64, a2: f64) -> StabilityResult {
+pub fn stab2vev(a0: f64, a1: f64, a2: f64) -> StabilityResult {
     if a0 <= 0. {
         StabilityResult::Violated1([1., 0., 0.])
     } else if a2 <= 0. {
@@ -28,7 +28,7 @@ fn stab2vev(a0: f64, a1: f64, a2: f64) -> StabilityResult {
     }
 }
 
-fn stab3vev(alpha: f64, b0: f64, b1: f64, b2: f64, c0: f64, c1: f64, c2: f64) -> StabilityResult {
+pub fn stab3vev(alpha: f64, b0: f64, b1: f64, b2: f64, c0: f64, c1: f64, c2: f64) -> StabilityResult {
     if alpha <= 0. {
         return StabilityResult::Violated1([1., 0., 0.]);
     }

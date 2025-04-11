@@ -2,6 +2,7 @@ use crate::polysolver::{solve_quadratic, solve_quartic};
 
 const THRESHOLD: f64 = 1e-10;
 
+#[derive(Debug)]
 pub enum StabilityResult {
     Stable,
     Violated1([f64; 3]),

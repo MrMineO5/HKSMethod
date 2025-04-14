@@ -78,7 +78,7 @@ pub fn solve_quartic(a0: f64, a1: f64, a2: f64, a3: f64, a4: f64) -> (f64, f64, 
         } else {
             if x1 < 0. {
                 (f64::NAN, f64::NAN, f64::NAN, f64::NAN)
-            } else if (x2 < 0.) {
+            } else if x2 < 0. {
                 (-x2.sqrt() + shift, x2.sqrt() + shift, f64::NAN, f64::NAN)
             } else {
                 (-x2.sqrt() + shift, -x1.sqrt() + shift, x1.sqrt() + shift, x2.sqrt() + shift)

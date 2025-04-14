@@ -8,5 +8,5 @@ pub fn check_perturbativity<const N: usize>(funs: [BetaFunctionValue; N], thresh
         sum_b1 += funs[i].b1.abs();
         sum_b2 += funs[i].b2.abs();
     }
-    sum_b1 / PI_4_2 < threshold * sum_b1 / PI_4_4
+    sum_b2 / PI_4_4 < threshold * sum_b1 / PI_4_2
 }

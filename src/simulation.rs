@@ -75,4 +75,9 @@ impl<const N: usize> Integrator<N> {
             }
         }
     }
+    
+    pub fn reset(&mut self, initial_couplings: Couplings<N>) {
+        self.time_step.couplings = initial_couplings;
+        self.time_step.log_scale = self.params.initial_scale;
+    }
 }

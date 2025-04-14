@@ -1,5 +1,6 @@
 use crate::model::Couplings;
 use crate::models::main_model::MainModel;
+use crate::scanner::scanner::Scanner;
 use crate::simulation::Integrator;
 
 mod model;
@@ -11,19 +12,23 @@ mod scanner;
 fn main() {
     let model = MainModel;
 
-    let mut simulation = Integrator::new(
+    let mut scanner = Scanner::new(
+        [
+            (0.425, 0.425),
+            (0.1, 0.2),
+            (-0.2, -0.3),
+            (0.0, 0.2),
+            (0.0, 0.2),
+            (0.0, 0.2),
+            (0.0, 0.2)
+        ],
         simulation::IntegrationParameters {
             initial_scale: 1.22E19_f64.ln(),
             final_scale: 1.0E11_f64.ln(),
             num_steps: 1000000,
         },
-        Box::new(model),
-        Couplings {
-            couplings: [0.425, 0.2, -0.3, 0.1, 0.1, 0.1, 0.1],
-        },
+        Box::new(model)
     );
 
-    // for n in 0..10000000 {
-    simulation.perform_full_integration();
-    // }
+    scanner.scan(100)
 }

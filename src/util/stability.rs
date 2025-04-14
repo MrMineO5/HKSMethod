@@ -116,15 +116,21 @@ pub fn stab3vev(alpha: f64, b0: f64, b1: f64, b2: f64, c0: f64, c1: f64, c2: f64
 
     println!("Roots: d1: {}, d2: {}, d3: {}, d4: {}", d1, d2, d3, d4);
 
-    let repeated = if (d1 - d2).abs() < THRESHOLD {
-        (d1 + d2) / 2.
-    } else if (d2 - d3).abs() < THRESHOLD {
-        (d2 + d3) / 2.
-    } else if (d3 - d4).abs() < THRESHOLD {
-        (d3 + d4) / 2.
-    } else {
-        panic!("No repeated roots found");
-    };
+    // Find the two roots closest together
+    let mut repeated = 0.;
+    let mut min_dist = f64::MAX;
+    let roots = [d1, d2, d3, d4];
+    for i in 0..3 {
+        if roots[i+1].is_nan() {
+            break;
+        }
+        
+        let dist = (roots[i] - roots[i + 1]).abs();
+        if dist < min_dist {
+            min_dist = dist;
+            repeated = (roots[i] + roots[i + 1]) / 2.;
+        }
+    }
 
     let val = ((c0 + c1 * repeated.powi(2) + c2 * repeated.powi(4)) / alpha).powf(0.25);
 

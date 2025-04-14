@@ -1,5 +1,5 @@
-use crate::constants::{PI_4_2, PI_4_4, PI_4_6};
-use crate::stability::FinalStabilityResult;
+use crate::util::constants::{PI_4_2, PI_4_4, PI_4_6};
+use crate::util::stability::FinalStabilityResult;
 
 #[derive(Debug)]
 pub struct BetaFunctionValue {

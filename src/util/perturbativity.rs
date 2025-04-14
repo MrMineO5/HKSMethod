@@ -1,5 +1,5 @@
-use crate::constants::{PI_4_2, PI_4_4};
 use crate::model::BetaFunctionValue;
+use crate::util::constants::{PI_4_2, PI_4_4};
 
 pub fn check_perturbativity<const N: usize>(funs: [BetaFunctionValue; N], threshold: f64) -> bool {
     let mut sum_b1 = 0.;

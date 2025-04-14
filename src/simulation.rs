@@ -1,6 +1,6 @@
 use crate::model::{Couplings, Model, TimeStep};
-use crate::perturbativity::check_perturbativity;
-use crate::stability::FinalStabilityResult;
+use crate::util::perturbativity::check_perturbativity;
+use crate::util::stability::FinalStabilityResult;
 
 pub struct IntegrationParameters {
     pub initial_scale: f64,

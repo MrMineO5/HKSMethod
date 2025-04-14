@@ -1,5 +1,5 @@
 use crate::model::{BetaFunctionValue, Couplings, Model};
-use crate::stability::{stab3vev, FinalStabilityResult, StabilityResult};
+use crate::util::stability::{stab3vev, FinalStabilityResult, StabilityResult};
 
 pub struct MainModel;
 impl Model<7> for MainModel {

@@ -2,13 +2,11 @@ use crate::model::Couplings;
 use crate::models::main_model::MainModel;
 use crate::simulation::Integrator;
 
-mod constants;
 mod model;
 mod models;
-mod perturbativity;
-mod polysolver;
 mod simulation;
-mod stability;
+mod util;
+mod scanner;
 
 fn main() {
     let model = MainModel;

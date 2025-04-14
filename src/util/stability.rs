@@ -1,4 +1,4 @@
-use crate::polysolver::{solve_quadratic, solve_quartic};
+use crate::util::polysolver::{solve_quadratic, solve_quartic};
 
 const THRESHOLD: f64 = 1e-10;
 
@@ -14,14 +14,6 @@ pub enum StabilityResult {
     Stable,
     Violated1([f64; 3]),
     Violated2([f64; 3], [f64; 3])
-}
-
-pub fn stab1vev(a: f64) -> StabilityResult {
-    if a > 0. {
-        StabilityResult::Stable
-    } else {
-        StabilityResult::Violated1([1., 0., 0.])
-    }
 }
 
 pub fn stab2vev(a0: f64, a1: f64, a2: f64) -> StabilityResult {

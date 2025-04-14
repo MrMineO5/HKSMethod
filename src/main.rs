@@ -1,17 +1,17 @@
 use crate::model::Couplings;
-use crate::models::toy_model::ToyModel;
+use crate::models::main_model::MainModel;
 use crate::simulation::Integrator;
 
+mod constants;
 mod model;
 mod models;
 mod perturbativity;
 mod polysolver;
-mod stability;
 mod simulation;
-mod constants;
+mod stability;
 
 fn main() {
-    let model = ToyModel;
+    let model = MainModel;
 
     let mut simulation = Integrator::new(
         simulation::IntegrationParameters {
@@ -21,9 +21,11 @@ fn main() {
         },
         Box::new(model),
         Couplings {
-            couplings: [0.425, 0.2, -0.3]
+            couplings: [0.425, 0.2, -0.3, 0.1, 0.1, 0.1, 0.1],
         },
     );
 
+    // for n in 0..10000000 {
     simulation.perform_full_integration();
+    // }
 }

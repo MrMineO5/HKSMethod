@@ -1,8 +1,8 @@
 use crate::model::{BetaFunctionValue, Couplings, Model};
 use crate::stability::{stab3vev, FinalStabilityResult, StabilityResult};
 
-pub struct MainMode;
-impl Model<7> for MainMode {
+pub struct MainModel;
+impl Model<7> for MainModel {
     fn beta_function(&self, couplings: &Couplings<7>) -> [BetaFunctionValue; 7] {
         let [g, l1, l2, l6, l7, l8, l9] = couplings.couplings;
 

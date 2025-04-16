@@ -1,3 +1,4 @@
+use std::sync::mpsc::Sender;
 use indicatif::ProgressBar;
 use crate::model::{Couplings, Model};
 use crate::scanner::consumer::ScanConsumer;
@@ -21,7 +22,7 @@ impl<const N: usize> Scanner<N> {
         }
     }
 
-    pub fn scan(&mut self, num_samples: u64, consumer: &mut dyn ScanConsumer<N>, pb: ProgressBar) {
+    pub fn scan(&mut self, num_samples: u64, consumer: &mut dyn ScanConsumer<N>, sender: Sender<u64>) {
         for i in 0..num_samples {
             let couplings = generate_couplings(self.coupling_ranges);
             self.integrator.reset(&couplings);
@@ -29,10 +30,10 @@ impl<const N: usize> Scanner<N> {
             consumer.consume(couplings, res);
             
             if i % 1000 == 0 {
-                pb.inc(1000);
+                sender.send(1000).expect("Failed to send progress");
             }
         }
-        pb.finish_and_clear();
+        sender.send(num_samples % 1000).expect("Failed to send progress");
     }
 }
 

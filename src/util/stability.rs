@@ -114,7 +114,7 @@ pub fn stab3vev(alpha: f64, b0: f64, b1: f64, b2: f64, c0: f64, c1: f64, c2: f64
         )
     }
 
-    println!("Roots: d1: {}, d2: {}, d3: {}, d4: {}", d1, d2, d3, d4);
+    // println!("Roots: d1: {}, d2: {}, d3: {}, d4: {}", d1, d2, d3, d4);
 
     // Find the two roots closest together
     let mut repeated = 0.;

@@ -13,6 +13,7 @@ impl BetaFunctionValue {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Couplings<const N: usize> {
     pub couplings: [f64; N],
 }

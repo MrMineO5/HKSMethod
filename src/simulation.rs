@@ -14,6 +14,13 @@ enum IntegrationStepResult {
     Perturbativity,
 }
 
+pub enum IntegrationResult {
+    Unbroken,
+    InitiallyUnstable,
+    PerturbativityViolated(f64),
+    Broken(f64, FinalStabilityResult)
+}
+
 pub struct Integrator<const N: usize> {
     pub params: IntegrationParameters,
     pub model: Box<dyn Model<N>>,
@@ -60,24 +67,27 @@ impl<const N: usize> Integrator<N> {
         IntegrationStepResult::Continue
     }
 
-    pub fn perform_full_integration(&mut self) {
+    pub fn perform_full_integration(&mut self) -> IntegrationResult {
         for i in 0..self.params.num_steps {
             match self.perform_integration_step() {
                 IntegrationStepResult::Continue => {}
                 IntegrationStepResult::Stability(result) => {
-                    println!("Stability condition violated at step {}, scale {}: {:?}", i, self.time_step.log_scale, result);
-                    break;
+                    return if i == 0 {
+                        IntegrationResult::InitiallyUnstable
+                    } else {
+                        IntegrationResult::Broken(self.time_step.log_scale, result)
+                    };
                 }
                 IntegrationStepResult::Perturbativity => {
-                    println!("Perturbativity condition violated");
-                    break;
+                    return IntegrationResult::PerturbativityViolated(self.time_step.log_scale);
                 }
             }
         }
+        IntegrationResult::Unbroken
     }
     
-    pub fn reset(&mut self, initial_couplings: Couplings<N>) {
-        self.time_step.couplings = initial_couplings;
+    pub fn reset(&mut self, initial_couplings: &Couplings<N>) {
+        self.time_step.couplings.couplings = initial_couplings.couplings;
         self.time_step.log_scale = self.params.initial_scale;
     }
 }

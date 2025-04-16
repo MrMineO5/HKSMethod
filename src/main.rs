@@ -3,7 +3,7 @@ use crate::scanner::consumer::stability_consumer::StabilityConsumer;
 use crate::scanner::consumer::ScanConsumer;
 use crate::scanner::scanner::Scanner;
 use indicatif::{ProgressBar, ProgressStyle};
-use std::thread;
+use std::{env, thread};
 
 mod model;
 mod models;
@@ -12,21 +12,23 @@ mod simulation;
 mod util;
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+    
     println!("Setting up...");
     let coupling_ranges = [
         (0.425, 0.425),
-        (-2., 2.),
-        (-2., 2.),
-        (-2., 2.),
-        (-2., 2.),
-        (-2., 2.),
-        (-2., 2.),
+        (-1., 1.),
+        (-1., 1.),
+        (-1., 1.),
+        (-1., 1.),
+        (-1., 1.),
+        (-1., 1.),
     ];
 
     let num_threads = thread::available_parallelism()
         .expect("Failed to get available parallelism")
         .get() as u64;
-    let num_samples = 10000000000u64;
+    let num_samples = args[1].parse::<u64>().unwrap();
     let total_samples = num_threads * num_samples;
 
     let (tx, rx) = std::sync::mpsc::channel();
@@ -90,6 +92,9 @@ fn main() {
 
     let images = merge_consumer.render();
 
+    // Create out directory
+    std::fs::create_dir_all("out").expect("Failed to create output directory");
+    
     for i in 0..images.len() {
         for j in 0..images[i].len() {
             let filename = format!("out/stability_{}_{}.png", i, j);

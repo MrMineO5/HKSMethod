@@ -46,8 +46,8 @@ impl<const N: usize, const NX: usize, const NY: usize> StabilityConsumer<N, NX, 
         let mut images = vec![vec![Image::new(); N]; N];
         for i in 0..N {
             for j in 0..N {
-                images[i][j].draw_boolean_layer(&self.perturbativity_violated[i*N+j], 0xFF0000);
                 images[i][j].draw_boolean_layer(&self.stability_violated[i*N+j], 0x00FF00);
+                images[i][j].draw_boolean_layer(&self.perturbativity_violated[i*N+j], 0xFF0000);
                 images[i][j].draw_boolean_layer(&self.broken[i*N+j], 0x0000FF);
             }
         }

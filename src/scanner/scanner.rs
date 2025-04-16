@@ -22,14 +22,17 @@ impl<const N: usize> Scanner<N> {
     }
 
     pub fn scan(&mut self, num_samples: u64, consumer: &mut dyn ScanConsumer<N>, pb: ProgressBar) {
-        for _ in 0..num_samples {
+        for i in 0..num_samples {
             let couplings = generate_couplings(self.coupling_ranges);
             self.integrator.reset(&couplings);
             let res = self.integrator.perform_full_integration();
             consumer.consume(couplings, res);
             
-            pb.inc(1);
+            if i % 1000 == 0 {
+                pb.inc(1000);
+            }
         }
+        pb.finish_and_clear();
     }
 }
 

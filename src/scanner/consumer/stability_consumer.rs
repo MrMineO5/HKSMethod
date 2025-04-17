@@ -65,7 +65,7 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Stabi
         match result {
             IntegrationResult::PerturbativityViolated(_) => {
                 for i in 0..N {
-                    for j in i..N {
+                    for j in 0..N {
                         let index = i * N + j;
                         self.perturbativity_violated[index].write(couplings_ref[i], couplings_ref[j], true);
                     }
@@ -73,7 +73,7 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Stabi
             }
             IntegrationResult::Broken(_, _) => {
                 for i in 0..N {
-                    for j in i..N {
+                    for j in 0..N {
                         let index = i * N + j;
                         self.broken[index].write(couplings_ref[i], couplings_ref[j], true);
                     }
@@ -81,7 +81,7 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Stabi
             }
             IntegrationResult::InitiallyUnstable => {
                 for i in 0..N {
-                    for j in i..N {
+                    for j in 0..N {
                         let index = i * N + j;
                         self.stability_violated[index].write(couplings_ref[i], couplings_ref[j], true);
                     }

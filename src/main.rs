@@ -69,7 +69,7 @@ fn main() {
         StabilityConsumer::new(coupling_ranges);
 
     let sty = ProgressStyle::with_template(
-        "[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} @ {per_sec} ({eta})",
+        "[{elapsed_precise}] {percent:>2}% {bar:40.cyan/blue} {pos:>7}/{len:7} @ {per_sec} ({eta})",
     )
     .unwrap()
     .progress_chars("##-");

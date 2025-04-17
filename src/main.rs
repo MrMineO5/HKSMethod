@@ -25,9 +25,10 @@ fn main() {
         (-1., 1.),
     ];
 
-    let num_threads = thread::available_parallelism()
-        .expect("Failed to get available parallelism")
-        .get() as u64;
+    let num_threads = 1;
+    // let num_threads = thread::available_parallelism()
+    //     .expect("Failed to get available parallelism")
+    //     .get() as u64;
     let num_samples = args[1].parse::<u64>().unwrap();
     let total_samples = num_threads * num_samples;
 

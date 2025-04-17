@@ -2,7 +2,7 @@ use std::sync::mpsc::Sender;
 use indicatif::ProgressBar;
 use crate::model::{Couplings, Model};
 use crate::scanner::consumer::ScanConsumer;
-use crate::simulation::{IntegrationParameters, Integrator};
+use crate::simulation::{IntegrationParameters, IntegrationResult, Integrator};
 
 pub type CouplingRanges<const N: usize> = [(f64, f64); N];
 
@@ -23,11 +23,16 @@ impl<const N: usize> Scanner<N> {
     }
 
     pub fn scan(&mut self, num_samples: u64, consumer: &mut dyn ScanConsumer<N>, sender: Sender<u64>) {
-        for i in 0..num_samples {
+        let mut i = 0;
+        while i < num_samples {
             let couplings = generate_couplings(self.coupling_ranges);
             self.integrator.reset(&couplings);
             let res = self.integrator.perform_full_integration();
+            if let IntegrationResult::Invalid = res {
+                continue;
+            }
             consumer.consume(couplings, res);
+            i += 1;
             
             if i % 1000 == 0 {
                 sender.send(1000).expect("Failed to send progress");

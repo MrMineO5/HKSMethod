@@ -1,6 +1,6 @@
 use crate::model::{Couplings, Model, TimeStep};
 use crate::util::perturbativity::check_perturbativity;
-use crate::util::stability::FinalStabilityResult;
+use crate::util::stability::{FinalStabilityResult, StabilityResult};
 
 pub struct IntegrationParameters {
     pub initial_scale: f64,
@@ -18,7 +18,8 @@ pub enum IntegrationResult {
     Unbroken,
     InitiallyUnstable,
     PerturbativityViolated(f64),
-    Broken(f64, FinalStabilityResult)
+    Broken(f64, FinalStabilityResult),
+    Invalid,
 }
 
 pub struct Integrator<const N: usize> {
@@ -69,12 +70,16 @@ impl<const N: usize> Integrator<N> {
 
     pub fn perform_full_integration(&mut self) -> IntegrationResult {
         for i in 0..self.params.num_steps {
+            // println!("Couplings {}: {:?}", i, self.time_step.couplings);
             match self.perform_integration_step() {
                 IntegrationStepResult::Continue => {}
                 IntegrationStepResult::Stability(result) => {
                     return if i == 0 {
                         IntegrationResult::InitiallyUnstable
                     } else {
+                        if let FinalStabilityResult::UnstableAllowed(StabilityResult::ViolatedReqInit) = result {
+                            return IntegrationResult::Invalid;
+                        }
                         IntegrationResult::Broken(self.time_step.log_scale, result)
                     };
                 }

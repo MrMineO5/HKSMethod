@@ -13,7 +13,8 @@ pub enum FinalStabilityResult {
 pub enum StabilityResult {
     Stable,
     Violated1([f64; 3]),
-    Violated2([f64; 3], [f64; 3])
+    Violated2([f64; 3], [f64; 3]),
+    ViolatedReqInit,
 }
 
 pub fn stab2vev(a0: f64, a1: f64, a2: f64) -> StabilityResult {
@@ -114,6 +115,8 @@ pub fn stab3vev(alpha: f64, b0: f64, b1: f64, b2: f64, c0: f64, c1: f64, c2: f64
         )
     }
 
+    // println!("Parameters: alpha: {}, b0: {}, b1: {}, b2: {}, c0: {}, c1: {}, c2: {}", alpha, b0, b1, b2, c0, c1, c2);
+    // println!("Quartic: a0: {}, a1: {}, a2: {}, a3: {}, a4: {}", a0, a1, a2, a3, a4);
     // println!("Roots: d1: {}, d2: {}, d3: {}, d4: {}", d1, d2, d3, d4);
 
     // Find the two roots closest together
@@ -130,6 +133,10 @@ pub fn stab3vev(alpha: f64, b0: f64, b1: f64, b2: f64, c0: f64, c1: f64, c2: f64
             min_dist = dist;
             repeated = (roots[i] + roots[i + 1]) / 2.;
         }
+    }
+    
+    if min_dist > 1. {
+        return StabilityResult::ViolatedReqInit;
     }
 
     let val = ((c0 + c1 * repeated.powi(2) + c2 * repeated.powi(4)) / alpha).powf(0.25);

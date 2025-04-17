@@ -15,6 +15,7 @@ impl<const N: usize> ScanConsumer<N> for PrintConsumer<N> {
             IntegrationResult::Broken(scale, stability_result) => {
                 println!("Broken at scale {}: {:?}", scale, stability_result)
             }
+            IntegrationResult::Invalid => panic!()
         }
     }
 }

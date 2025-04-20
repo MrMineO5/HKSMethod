@@ -38,6 +38,18 @@ pub fn boolean_layer<const NX: usize, const NY: usize>(
     }
 }
 
+pub fn count_layer<const NX: usize, const NY: usize>(
+    range_x: (f64, f64),
+    range_y: (f64, f64),
+) -> Layer<i64, NX, NY> {
+    Layer {
+        data: [[0; NY]; NX],
+        range_x,
+        range_y,
+        merge_behaviour: |a, b| *a + b,
+    }
+}
+
 #[derive(Copy, Clone)]
 pub struct Image<const NX: usize, const NY: usize> {
     data: [[u32; NY]; NX],
@@ -57,6 +69,51 @@ impl<const NX: usize, const NY: usize> Image<NX, NY> {
                     continue;
                 }
                 self.data[i][j] = transformed;
+            }
+        }
+    }
+    
+    pub fn draw_count_layers(&mut self, layer1: &Layer<i64, NX, NY>, layer2: &Layer<i64, NX, NY>, color1: u32, color_mid: u32, color2: u32) {
+        // Draw layers as a gradient from color1 to color2 depending on the ratio
+        for i in 0..NX {
+            for j in 0..NY {
+                let count1 = layer1.data[i][j];
+                let count2 = layer2.data[i][j];
+                if count1 == 0 && count2 == 0 {
+                    continue;
+                }
+                let ratio = count1 as f64 / (count1 + count2) as f64;
+                let blended_color = if ratio > 0.5 {
+                    let ratio = (ratio - 0.5) * 2.0;
+                    let r1 = (color1 >> 16) & 0xFF;
+                    let g1 = (color1 >> 8) & 0xFF;
+                    let b1 = color1 & 0xFF;
+                    let r2 = (color_mid >> 16) & 0xFF;
+                    let g2 = (color_mid >> 8) & 0xFF;
+                    let b2 = color_mid & 0xFF;
+
+                    let r = ((r1 as f64 * ratio) + (r2 as f64 * (1.0 - ratio))) as u32;
+                    let g = ((g1 as f64 * ratio) + (g2 as f64 * (1.0 - ratio))) as u32;
+                    let b = ((b1 as f64 * ratio) + (b2 as f64 * (1.0 - ratio))) as u32;
+
+                    (r << 16) | (g << 8) | b
+                } else {
+                    let ratio = ratio * 2.0;
+                    let r1 = (color_mid >> 16) & 0xFF;
+                    let g1 = (color_mid >> 8) & 0xFF;
+                    let b1 = color_mid & 0xFF;
+                    let r2 = (color2 >> 16) & 0xFF;
+                    let g2 = (color2 >> 8) & 0xFF;
+                    let b2 = color2 & 0xFF;
+
+                    let r = ((r1 as f64 * ratio) + (r2 as f64 * (1.0 - ratio))) as u32;
+                    let g = ((g1 as f64 * ratio) + (g2 as f64 * (1.0 - ratio))) as u32;
+                    let b = ((b1 as f64 * ratio) + (b2 as f64 * (1.0 - ratio))) as u32;
+
+                    (r << 16) | (g << 8) | b
+                };
+                
+                self.data[i][j] = blended_color;
             }
         }
     }

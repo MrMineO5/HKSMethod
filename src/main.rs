@@ -4,6 +4,7 @@ use crate::scanner::consumer::ScanConsumer;
 use crate::scanner::scanner::Scanner;
 use indicatif::{ProgressBar, ProgressStyle};
 use std::{env, thread};
+use crate::scanner::consumer::allowed_consumer::AllowedConsumer;
 
 mod model;
 mod models;
@@ -17,12 +18,18 @@ fn main() {
     println!("Setting up...");
     let coupling_ranges = [
         (0.425, 0.425),
-        (-1., 1.),
-        (-1., 1.),
-        (-1., 1.),
-        (-1., 1.),
-        (-1., 1.),
-        (-1., 1.),
+        // (-1., 1.),
+        // (-1., 1.),
+        // (-1., 1.),
+        // (-1., 1.),
+        // (-1., 1.),
+        // (-1., 1.),
+        (-0.5, 0.5),
+        (-0.5, 0.5),
+        (-0.5, 0.5),
+        (-0.5, 0.5),
+        (-0.5, 0.5),
+        (-0.5, 0.5),
     ];
 
     let num_threads = thread::available_parallelism()
@@ -43,8 +50,8 @@ fn main() {
             let tx = tx.clone();
             let model = MainModel;
             thread::spawn(move || {
-                let mut send_consumer: StabilityConsumer<7, 400, 400> =
-                    StabilityConsumer::new(coupling_ranges);
+                let mut send_consumer: AllowedConsumer<7, 400, 400> =
+                    AllowedConsumer::new(coupling_ranges);
 
                 let mut scanner = Scanner::new(
                     coupling_ranges,
@@ -65,8 +72,8 @@ fn main() {
 
     println!("Simulating...");
 
-    let mut merge_consumer: StabilityConsumer<7, 400, 400> =
-        StabilityConsumer::new(coupling_ranges);
+    let mut merge_consumer: AllowedConsumer<7, 400, 400> =
+        AllowedConsumer::new(coupling_ranges);
 
     let sty = ProgressStyle::with_template(
         "[{elapsed_precise}] {percent:>2}% {bar:40.cyan/blue} {pos:>7}/{len:7} @ {per_sec} ({eta})",
@@ -97,7 +104,7 @@ fn main() {
     
     for i in 0..images.len() {
         for j in 0..images[i].len() {
-            let filename = format!("out/stability_{}_{}.png", i, j);
+            let filename = format!("out/allowed_{}_{}.png", i, j);
             images[i][j].save_to_png(&filename).unwrap();
         }
     }

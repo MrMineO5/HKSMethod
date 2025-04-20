@@ -57,7 +57,7 @@ pub struct Image<const NX: usize, const NY: usize> {
 impl<const NX: usize, const NY: usize> Image<NX, NY> {
     pub fn new() -> Self {
         Image {
-            data: [[0; NY]; NX],
+            data: [[0xFFFFFF; NY]; NX],
         }
     }
 

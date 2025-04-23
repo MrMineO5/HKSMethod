@@ -58,6 +58,7 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Speci
                     FinalStabilityResult::UnstableAllowed(stability_result) => {
                         let supergroup = match stability_result {
                             StabilityResult::Violated1(vev1) | StabilityResult::Violated2(vev1, _) => {
+                                // We ignore the second vev in this case because it always consists of a +-
                                 vev1[0].abs() < VEV_EPSILON || 
                                     vev1[1].abs() < VEV_EPSILON || 
                                     vev1[2].abs() < VEV_EPSILON ||

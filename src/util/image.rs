@@ -50,6 +50,18 @@ pub fn count_layer<const NX: usize, const NY: usize>(
     }
 }
 
+pub fn average_layer<const NX: usize, const NY: usize>(
+    range_x: (f64, f64),
+    range_y: (f64, f64),
+) -> Layer<(f64, u64), NX, NY> {
+    Layer {
+        data: [[(0.0, 0); NY]; NX],
+        range_x,
+        range_y,
+        merge_behaviour: |(aa, na), (ab, nb)| (aa + ab, na + nb)
+    }
+}
+
 #[derive(Copy, Clone)]
 pub struct Image<const NX: usize, const NY: usize> {
     data: [[u32; NY]; NX],
@@ -124,6 +136,34 @@ impl<const NX: usize, const NY: usize> Image<NX, NY> {
                 if layer.data[i][j] {
                     self.data[i][j] = color;
                 }
+            }
+        }
+    }
+    
+    pub fn draw_gradient_layer(&mut self, layer: &Layer<(f64, u64), NX, NY>, min_color: u32, max_color: u32) {
+        let mut values: [[f64; NX]; NY] = [[0.0; NX]; NY];
+        let mut max: f64 = f64::NEG_INFINITY;
+        let mut min: f64 = f64::INFINITY;
+        for x in 0..NX {
+            for y in 0..NY {
+                let (sum, count) = layer.data[x][y];
+                let avg = sum / count as f64;
+                values[x][y] = avg;
+                
+                if avg < min {
+                    min = avg;
+                }
+                if avg > max {
+                    max = avg;
+                }
+            }
+        }
+        
+        for x in 0..NX {
+            for y in 0..NY {
+                let partial = (values[x][y] - min) / (max - min);
+                let color = (max_color as f64 * partial + min_color as f64 * (1.0 - partial)) as u32;
+                self.data[x][y] = color;
             }
         }
     }

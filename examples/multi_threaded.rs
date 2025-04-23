@@ -1,6 +1,7 @@
 use std::env;
 use MasterResearchProject::models::main_model::MainModel;
 use MasterResearchProject::scanner::consumer::allowed_consumer::AllowedConsumer;
+use MasterResearchProject::scanner::consumer::special_allowed_consumer::SpecialAllowedConsumer;
 use MasterResearchProject::scanner::multi_threaded_scanner::MultiThreadedScanner;
 use MasterResearchProject::scanner::scanner::Scanner;
 use MasterResearchProject::simulation;
@@ -23,7 +24,7 @@ fn main() {
         // (-0.5, 0.5),
         // (-0.5, 0.5),
         // (-0.5, 0.5),
-        (0.25, 0.25),
+        (0.3, 0.3),
         (-0.3, -0.3),
         (0.1, 0.1),
         (0.0, 0.0),
@@ -34,7 +35,7 @@ fn main() {
     // let num_samples = args[1].parse::<u64>().unwrap();
     let num_samples = 10000;
 
-    let consumer: AllowedConsumer<7, 400, 400> = AllowedConsumer::new(coupling_ranges);
+    let consumer: SpecialAllowedConsumer<7, 400, 400> = SpecialAllowedConsumer::new(coupling_ranges);
 
     let mut scanner = MultiThreadedScanner::new(
         coupling_ranges,

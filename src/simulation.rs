@@ -2,6 +2,7 @@ use crate::model::{Couplings, Model, TimeStep};
 use crate::util::perturbativity::check_perturbativity;
 use crate::util::stability::{FinalStabilityResult, StabilityResult};
 
+#[derive(Debug, Clone)]
 pub struct IntegrationParameters {
     pub initial_scale: f64,
     pub final_scale: f64,

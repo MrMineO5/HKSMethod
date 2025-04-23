@@ -5,6 +5,7 @@ use crate::simulation::IntegrationResult;
 use crate::util::image::{boolean_layer, count_layer, Image, Layer};
 use crate::util::stability::FinalStabilityResult;
 
+#[derive(Clone)]
 pub struct AllowedConsumer<const N: usize, const NX: usize, const NY: usize> {
     broken_allowed: Vec<Layer<i64, NX, NY>>,
     broken_disallowed: Vec<Layer<i64, NX, NY>>,
@@ -30,13 +31,6 @@ impl<const N: usize, const NX: usize, const NY: usize> AllowedConsumer<N, NX, NY
     }
 
     pub fn merge(&mut self, other: AllowedConsumer<N, NX, NY>) {
-        for i in 0..N {
-            for j in 0..N {
-                let index = i * N + j;
-                self.broken_allowed[index].merge(&other.broken_allowed[index]);
-                self.broken_disallowed[index].merge(&other.broken_disallowed[index]);
-            }
-        }
     }
 
     pub fn render(&self) -> Vec<Vec<Image<NX, NY>>> {
@@ -80,6 +74,15 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Allow
                 }
             }
             _ => {}
+        }
+    }
+    fn merge(&mut self, other: Self) {
+        for i in 0..N {
+            for j in 0..N {
+                let index = i * N + j;
+                self.broken_allowed[index].merge(&other.broken_allowed[index]);
+                self.broken_disallowed[index].merge(&other.broken_disallowed[index]);
+            }
         }
     }
 }

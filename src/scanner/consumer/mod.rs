@@ -6,6 +6,7 @@ pub mod stability_consumer;
 pub mod allowed_consumer;
 pub mod threading_consumer;
 
-pub trait ScanConsumer<const N: usize> {
+pub trait ScanConsumer<const N: usize>: Clone {
     fn consume(&mut self, couplings: Couplings<N>, result: IntegrationResult);
+    fn merge(&mut self, other: Self);
 }

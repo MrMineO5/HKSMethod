@@ -6,11 +6,11 @@ use indicatif::{ProgressBar, ProgressStyle};
 use std::{env, thread};
 use crate::scanner::consumer::allowed_consumer::AllowedConsumer;
 
-mod model;
-mod models;
-mod scanner;
-mod simulation;
-mod util;
+pub mod model;
+pub mod models;
+pub mod scanner;
+pub mod simulation;
+pub mod util;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -24,10 +24,16 @@ fn main() {
         // (-1., 1.),
         // (-1., 1.),
         // (-1., 1.),
-        (-0.5, 0.5),
-        (-0.5, 0.5),
-        (-0.5, 0.5),
-        (-0.5, 0.5),
+        // (-0.5, 0.5),
+        // (-0.5, 0.5),
+        // (-0.5, 0.5),
+        // (-0.5, 0.5),
+        // (-0.5, 0.5),
+        // (-0.5, 0.5),
+        (0.25, 0.25),
+        (-0.3, -0.3),
+        (0.1, 0.1),
+        (0.0, 0.0),
         (-0.5, 0.5),
         (-0.5, 0.5),
     ];
@@ -35,7 +41,8 @@ fn main() {
     let num_threads = thread::available_parallelism()
         .expect("Failed to get available parallelism")
         .get() as u64;
-    let num_samples = args[1].parse::<u64>().unwrap();
+    // let num_samples = args[1].parse::<u64>().unwrap();
+    let num_samples = 100000;
     let total_samples = num_threads * num_samples;
 
     let (tx, rx) = std::sync::mpsc::channel();

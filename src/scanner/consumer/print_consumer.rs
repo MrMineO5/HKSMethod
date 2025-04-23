@@ -2,6 +2,7 @@ use crate::model::Couplings;
 use crate::scanner::consumer::ScanConsumer;
 use crate::simulation::IntegrationResult;
 
+#[derive(Clone)]
 pub struct PrintConsumer<const N: usize>;
 impl<const N: usize> ScanConsumer<N> for PrintConsumer<N> {
     fn consume(&mut self, couplings: Couplings<N>, result: IntegrationResult) {
@@ -17,5 +18,9 @@ impl<const N: usize> ScanConsumer<N> for PrintConsumer<N> {
             }
             IntegrationResult::Invalid => panic!()
         }
+    }
+
+    fn merge(&mut self, other: Self) {
+        // No merging logic needed for PrintConsumer
     }
 }

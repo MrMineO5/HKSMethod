@@ -1,6 +1,7 @@
 use crate::model::{BetaFunctionValue, Couplings, Model};
 use crate::util::stability::{stab3vev, FinalStabilityResult, StabilityResult};
 
+#[derive(Debug, Clone)]
 pub struct MainModel;
 impl Model<7> for MainModel {
     fn beta_function(&self, couplings: &Couplings<7>) -> [BetaFunctionValue; 7] {

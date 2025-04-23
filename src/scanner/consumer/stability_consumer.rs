@@ -4,6 +4,7 @@ use crate::scanner::scanner::CouplingRanges;
 use crate::simulation::IntegrationResult;
 use crate::util::image::{boolean_layer, Image, Layer};
 
+#[derive(Clone)]
 pub struct StabilityConsumer<const N: usize, const NX: usize, const NY: usize> {
     perturbativity_violated: Vec<Layer<bool, NX, NY>>,
     stability_violated: Vec<Layer<bool, NX, NY>>,
@@ -28,17 +29,6 @@ impl<const N: usize, const NX: usize, const NY: usize> StabilityConsumer<N, NX, 
             perturbativity_violated,
             stability_violated,
             broken
-        }
-    }
-
-    pub fn merge(&mut self, other: StabilityConsumer<N, NX, NY>) {
-        for i in 0..N {
-            for j in 0..N {
-                let index = i * N + j;
-                self.perturbativity_violated[index].merge(&other.perturbativity_violated[index]);
-                self.stability_violated[index].merge(&other.stability_violated[index]);
-                self.broken[index].merge(&other.broken[index]);
-            }
         }
     }
 
@@ -88,6 +78,16 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Stabi
                 }
             }
             _ => {}
+        }
+    }
+    fn merge(&mut self, other: Self) {
+        for i in 0..N {
+            for j in 0..N {
+                let index = i * N + j;
+                self.perturbativity_violated[index].merge(&other.perturbativity_violated[index]);
+                self.stability_violated[index].merge(&other.stability_violated[index]);
+                self.broken[index].merge(&other.broken[index]);
+            }
         }
     }
 }

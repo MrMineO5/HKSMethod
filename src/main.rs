@@ -1,8 +1,7 @@
 use crate::models::main_model::MainModel;
-use crate::scanner::consumer::stability_consumer::StabilityConsumer;
-use crate::scanner::consumer::ScanConsumer;
 use crate::scanner::scanner::Scanner;
 use indicatif::{ProgressBar, ProgressStyle};
+use scanner::consumer::ScanConsumer;
 use std::{env, thread};
 use crate::scanner::consumer::allowed_consumer::AllowedConsumer;
 
@@ -41,8 +40,8 @@ fn main() {
     let num_threads = thread::available_parallelism()
         .expect("Failed to get available parallelism")
         .get() as u64;
-    // let num_samples = args[1].parse::<u64>().unwrap();
-    let num_samples = 100000;
+    let num_samples = args[1].parse::<u64>().unwrap();
+    // let num_samples = 100000;
     let total_samples = num_threads * num_samples;
 
     let (tx, rx) = std::sync::mpsc::channel();

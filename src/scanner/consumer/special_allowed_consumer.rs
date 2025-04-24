@@ -1,9 +1,8 @@
-use std::f64::EPSILON;
 use crate::model::Couplings;
 use crate::scanner::consumer::ScanConsumer;
 use crate::scanner::scanner::CouplingRanges;
 use crate::simulation::IntegrationResult;
-use crate::util::image::{boolean_layer, count_layer, Image, Layer};
+use crate::util::image::{boolean_layer, Image, Layer};
 use crate::util::stability::{FinalStabilityResult, StabilityResult};
 
 const VEV_EPSILON: f64 = 1E-12;

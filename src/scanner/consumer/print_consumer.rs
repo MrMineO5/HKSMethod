@@ -20,7 +20,7 @@ impl<const N: usize> ScanConsumer<N> for PrintConsumer<N> {
         }
     }
 
-    fn merge(&mut self, other: Self) {
+    fn merge(&mut self, _other: Self) {
         // No merging logic needed for PrintConsumer
     }
 }

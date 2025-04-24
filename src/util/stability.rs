@@ -1,7 +1,5 @@
 use crate::util::polysolver::{solve_quadratic, solve_quartic};
 
-const THRESHOLD: f64 = 1e-10;
-
 #[derive(Debug)]
 pub enum FinalStabilityResult {
     Stable,

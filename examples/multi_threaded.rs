@@ -1,10 +1,8 @@
 use std::{env, thread};
-use MasterResearchProject::models::main_model::MainModel;
-use MasterResearchProject::scanner::consumer::allowed_consumer::AllowedConsumer;
-use MasterResearchProject::scanner::consumer::special_allowed_consumer::SpecialAllowedConsumer;
-use MasterResearchProject::scanner::multi_threaded_scanner::MultiThreadedScanner;
-use MasterResearchProject::scanner::scanner::Scanner;
-use MasterResearchProject::simulation;
+use master_research_project::models::main_model::MainModel;
+use master_research_project::scanner::consumer::special_allowed_consumer::SpecialAllowedConsumer;
+use master_research_project::scanner::multi_threaded_scanner::MultiThreadedScanner;
+use master_research_project::simulation;
 
 fn main() {
     let args: Vec<String> = env::args().collect();

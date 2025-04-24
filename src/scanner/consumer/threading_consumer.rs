@@ -12,7 +12,7 @@ impl<const N: usize> ScanConsumer<N> for SendConsumer<N> {
         self.sender.send((couplings, result)).unwrap();
     }
 
-    fn merge(&mut self, other: Self) {
+    fn merge(&mut self, _other: Self) {
         // No need to merge, all data was already sent to the channel
     }
 }

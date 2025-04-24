@@ -1,8 +1,6 @@
-use std::marker::PhantomData;
-use crate::model::{Couplings, Model};
+use crate::model::Model;
 use crate::scanner::consumer::ScanConsumer;
-use crate::simulation::{IntegrationParameters, IntegrationResult, Integrator};
-use std::sync::mpsc::Sender;
+use crate::simulation::IntegrationParameters;
 use std::thread;
 use indicatif::{ProgressBar, ProgressStyle};
 use crate::scanner::scanner::Scanner;

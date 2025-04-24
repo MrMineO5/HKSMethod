@@ -2,7 +2,7 @@ use crate::model::Couplings;
 use crate::scanner::consumer::ScanConsumer;
 use crate::scanner::scanner::CouplingRanges;
 use crate::simulation::IntegrationResult;
-use crate::util::image::{boolean_layer, count_layer, Image, Layer};
+use crate::util::image::{count_layer, Image, Layer};
 use crate::util::stability::FinalStabilityResult;
 
 #[derive(Clone)]
@@ -28,9 +28,6 @@ impl<const N: usize, const NX: usize, const NY: usize> AllowedConsumer<N, NX, NY
             broken_allowed,
             broken_disallowed,
         }
-    }
-
-    pub fn merge(&mut self, other: AllowedConsumer<N, NX, NY>) {
     }
 
     pub fn render(&self) -> Vec<Vec<Image<NX, NY>>> {

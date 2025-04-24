@@ -73,14 +73,14 @@ impl<const NX: usize, const NY: usize> Image<NX, NY> {
         }
     }
 
-    pub fn draw_layer<T>(&mut self, layer: &Layer<T, NX, NY>, transformer: fn(&T) -> u32) {
+    pub fn draw_layer<T>(&mut self, layer: &Layer<T, NX, NY>, transformer: fn(&T) -> i32) {
         for i in 0..NX {
             for j in 0..NY {
                 let transformed = transformer(&layer.data[i][j]);
                 if transformed < 0 {
                     continue;
                 }
-                self.data[i][j] = transformed;
+                self.data[i][j] = transformed as u32;
             }
         }
     }

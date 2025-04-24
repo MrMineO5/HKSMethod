@@ -1,6 +1,6 @@
 use std::{env, thread};
 use master_research_project::models::main_model::MainModel;
-use master_research_project::scanner::consumer::breaking_scale_consumer::BreakingScaleConsumer;
+use master_research_project::scanner::consumer::special_allowed_consumer::SpecialAllowedConsumer;
 use master_research_project::scanner::multi_threaded_scanner::MultiThreadedScanner;
 use master_research_project::simulation;
 
@@ -23,7 +23,7 @@ fn main() {
         .expect("Failed to get available parallelism")
         .get();
 
-    let consumer: BreakingScaleConsumer<7, 400, 400> = BreakingScaleConsumer::new(coupling_ranges, 5, 6);
+    let consumer: SpecialAllowedConsumer<7, 400, 400> = SpecialAllowedConsumer::new(coupling_ranges, 5, 6);
 
     let mut scanner = MultiThreadedScanner::new(
         coupling_ranges,
@@ -43,7 +43,7 @@ fn main() {
     // Create out directory
     std::fs::create_dir_all("out").expect("Failed to create output directory");
 
-    let filename = format!("out/scale_{}_{}.png", 5, 6);
+    let filename = format!("out/special_allowed_{}_{}.png", 5, 6);
     image.save_to_png(&filename).unwrap();
 
     println!("Done!");

@@ -9,42 +9,33 @@ const VEV_EPSILON: f64 = 1E-12;
 
 #[derive(Clone)]
 pub struct SpecialAllowedConsumer<const N: usize, const NX: usize, const NY: usize> {
-    broken_allowed: Vec<Layer<bool, NX, NY>>,
-    broken_super: Vec<Layer<bool, NX, NY>>,
-    broken_disallowed: Vec<Layer<bool, NX, NY>>,
+    broken_allowed: Box<Layer<bool, NX, NY>>,
+    broken_super: Box<Layer<bool, NX, NY>>,
+    broken_disallowed: Box<Layer<bool, NX, NY>>,
+    index_x: usize,
+    index_y: usize,
 }
 impl<const N: usize, const NX: usize, const NY: usize> SpecialAllowedConsumer<N, NX, NY> {
-    pub fn new(ranges: CouplingRanges<N>) -> Self {
-        let mut matrix = vec![boolean_layer(ranges[0], ranges[0]); N*N];
-        for i in 0..N {
-            for j in 0..N {
-                let range_x = ranges[i];
-                let range_y = ranges[j];
-                matrix[i * N + j] = boolean_layer(range_x, range_y);
-            }
-        }
-
-        let broken_allowed = matrix.clone();
-        let broken_super = matrix.clone();
-        let broken_disallowed = matrix;
+    pub fn new(ranges: CouplingRanges<N>, index_x: usize, index_y: usize) -> Self {
+        let broken_allowed = Box::new(boolean_layer(ranges[index_x], ranges[index_y]));
+        let broken_super = Box::new(boolean_layer(ranges[index_x], ranges[index_y]));
+        let broken_disallowed = Box::new(boolean_layer(ranges[index_x], ranges[index_y]));
 
         Self {
             broken_allowed,
             broken_super,
             broken_disallowed,
+            index_x,
+            index_y,
         }
     }
 
-    pub fn render(&self) -> Vec<Vec<Image<NX, NY>>> {
-        let mut images = vec![vec![Image::new(); N]; N];
-        for i in 0..N {
-            for j in 0..N {
-                images[i][j].draw_boolean_layer(&self.broken_allowed[i*N+j], 0x00FF00);
-                images[i][j].draw_boolean_layer(&self.broken_super[i*N+j], 0x0000FF);
-                images[i][j].draw_boolean_layer(&self.broken_disallowed[i*N+j], 0xFF0000);
-            }
-        }
-        images
+    pub fn render(&self) -> Image<NX, NY> {
+        let mut image = Image::new();
+        image.draw_boolean_layer(&self.broken_allowed, 0x00FF00);
+        image.draw_boolean_layer(&self.broken_super, 0x0000FF);
+        image.draw_boolean_layer(&self.broken_disallowed, 0xFF0000);
+        image
     }
 }
 impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for SpecialAllowedConsumer<N, NX, NY> {
@@ -76,28 +67,13 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Speci
                         };
                         
                         if supergroup {
-                            for i in 0..N {
-                                for j in 0..N {
-                                    let index = i * N + j;
-                                    self.broken_super[index].write(couplings_ref[i], couplings_ref[j], true);
-                                }
-                            }
+                            self.broken_super.write(couplings_ref[self.index_x], couplings_ref[self.index_y], true);
                         } else {
-                            for i in 0..N {
-                                for j in 0..N {
-                                    let index = i * N + j;
-                                    self.broken_allowed[index].write(couplings_ref[i], couplings_ref[j], true);
-                                }
-                            }
+                            self.broken_allowed.write(couplings_ref[self.index_x], couplings_ref[self.index_y], true);
                         }
                     }
                     FinalStabilityResult::UnstableDisallowed(_) => {
-                        for i in 0..N {
-                            for j in 0..N {
-                                let index = i * N + j;
-                                self.broken_disallowed[index].write(couplings_ref[i], couplings_ref[j], true);
-                            }
-                        }
+                        self.broken_disallowed.write(couplings_ref[self.index_x], couplings_ref[self.index_y], true);
                     }
                     _ => {}
                 }
@@ -106,13 +82,8 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Speci
         }
     }
     fn merge(&mut self, other: Self) {
-        for i in 0..N {
-            for j in 0..N {
-                let index = i * N + j;
-                self.broken_allowed[index].merge(&other.broken_allowed[index]);
-                self.broken_super[index].merge(&other.broken_super[index]);
-                self.broken_disallowed[index].merge(&other.broken_disallowed[index]);
-            }
-        }
+        self.broken_allowed.merge(&other.broken_allowed);
+        self.broken_super.merge(&other.broken_super);
+        self.broken_disallowed.merge(&other.broken_disallowed);
     }
 }

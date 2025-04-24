@@ -7,34 +7,23 @@ use crate::util::stability::FinalStabilityResult;
 
 #[derive(Clone)]
 pub struct BreakingScaleConsumer<const N: usize, const NX: usize, const NY: usize> {
-    breaking_scale: Vec<Layer<(f64, u64), NX, NY>>,
+    breaking_scale: Box<Layer<(f64, u64), NX, NY>>,
+    index_x: usize,
+    index_y: usize,
 }
 impl<const N: usize, const NX: usize, const NY: usize> BreakingScaleConsumer<N, NX, NY> {
-    pub fn new(ranges: CouplingRanges<N>) -> Self {
-        let mut matrix = vec![average_layer(ranges[0], ranges[0]); N*N];
-        for i in 0..N {
-            for j in 0..N {
-                let range_x = ranges[i];
-                let range_y = ranges[j];
-                matrix[i * N + j] = average_layer(range_x, range_y);
-            }
-        }
-
-        let breaking_scale = matrix;
-
+    pub fn new(ranges: CouplingRanges<N>, index_x: usize, index_y: usize) -> Self {
         Self {
-            breaking_scale
+            breaking_scale: Box::new(average_layer(ranges[index_x], ranges[index_y])),
+            index_x,
+            index_y,
         }
     }
 
-    pub fn render(&self) -> Vec<Vec<Image<NX, NY>>> {
-        let mut images = vec![vec![Image::new(); N]; N];
-        for i in 0..N {
-            for j in 0..N {
-                images[i][j].draw_gradient_layer(&self.breaking_scale[i*N+j], 0x00FF00, 0x0000FF);
-            }
-        }
-        images
+    pub fn render(&self) -> Image<NX, NY> {
+        let mut image = Image::new();
+        image.draw_gradient_layer(&self.breaking_scale, 0x00FF00, 0x0000FF);
+        image
     }
 }
 impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for BreakingScaleConsumer<N, NX, NY> {
@@ -49,12 +38,7 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Break
             IntegrationResult::Broken(log_scale, result) => {
                 match result {
                     FinalStabilityResult::UnstableAllowed(_) => {
-                        for i in 0..N {
-                            for j in 0..N {
-                                let index = i * N + j;
-                                self.breaking_scale[index].write(couplings_ref[i], couplings_ref[j], (log_scale, 1));
-                            }
-                        }
+                        self.breaking_scale.write(couplings_ref[self.index_x], couplings_ref[self.index_y], (log_scale, 1));
                     }
                     _ => {}
                 }
@@ -63,11 +47,6 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Break
         }
     }
     fn merge(&mut self, other: Self) {
-        for i in 0..N {
-            for j in 0..N {
-                let index = i * N + j;
-                self.breaking_scale[index].merge(&other.breaking_scale[index])
-            }
-        }
+        self.breaking_scale.merge(&other.breaking_scale);
     }
 }

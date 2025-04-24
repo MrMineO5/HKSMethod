@@ -162,6 +162,8 @@ impl<const NX: usize, const NY: usize> Image<NX, NY> {
                 }
             }
         }
+
+        println!("Gradient Layer: min: {}, max: {}", min, max);
         
         // Extract RGB components of min and max colors
         let min_r = ((min_color >> 16) & 0xFF) as f64;

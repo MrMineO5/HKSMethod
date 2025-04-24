@@ -147,6 +147,10 @@ impl<const NX: usize, const NY: usize> Image<NX, NY> {
         for x in 0..NX {
             for y in 0..NY {
                 let (sum, count) = layer.data[x][y];
+                if count == 0 {
+                    values[x][y] = f64::NAN;
+                    continue;
+                }
                 let avg = sum / count as f64;
                 values[x][y] = avg;
                 
@@ -159,11 +163,31 @@ impl<const NX: usize, const NY: usize> Image<NX, NY> {
             }
         }
         
+        // Extract RGB components of min and max colors
+        let min_r = ((min_color >> 16) & 0xFF) as f64;
+        let min_g = ((min_color >> 8) & 0xFF) as f64;
+        let min_b = (min_color & 0xFF) as f64;
+        
+        let max_r = ((max_color >> 16) & 0xFF) as f64;
+        let max_g = ((max_color >> 8) & 0xFF) as f64;
+        let max_b = (max_color & 0xFF) as f64;
+        
         for x in 0..NX {
             for y in 0..NY {
+                if values[x][y].is_nan() {
+                    continue;
+                }
                 let partial = (values[x][y] - min) / (max - min);
-                let color = (max_color as f64 * partial + min_color as f64 * (1.0 - partial)) as u32;
-                self.data[x][y] = color;
+                if partial > 1.0 || partial < 0.0 {
+                    panic!("Partial is out of range: {}", partial);
+                }
+                
+                // Interpolate each color channel separately
+                let r = ((max_r * partial) + (min_r * (1.0 - partial))) as u32;
+                let g = ((max_g * partial) + (min_g * (1.0 - partial))) as u32;
+                let b = ((max_b * partial) + (min_b * (1.0 - partial))) as u32;
+                
+                self.data[x][y] = (r << 16) | (g << 8) | b;
             }
         }
     }

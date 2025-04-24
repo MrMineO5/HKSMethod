@@ -91,6 +91,14 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Speci
                             }
                         }
                     }
+                    FinalStabilityResult::UnstableDisallowed(_) => {
+                        for i in 0..N {
+                            for j in 0..N {
+                                let index = i * N + j;
+                                self.broken_disallowed[index].write(couplings_ref[i], couplings_ref[j], true);
+                            }
+                        }
+                    }
                     _ => {}
                 }
             }

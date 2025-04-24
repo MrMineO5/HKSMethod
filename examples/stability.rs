@@ -19,7 +19,6 @@ fn main() {
     ];
 
     let num_samples = args[1].parse::<u64>().unwrap();
-    // let num_samples = 10000;
     let num_threads = thread::available_parallelism()
         .expect("Failed to get available parallelism")
         .get();

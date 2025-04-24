@@ -1,3 +1,5 @@
+use std::fs::File;
+use std::io::{BufWriter, Write};
 use std::{env, thread};
 use master_research_project::models::main_model::MainModel;
 use master_research_project::scanner::consumer::breaking_scale_consumer::BreakingScaleConsumer;
@@ -38,13 +40,17 @@ fn main() {
 
     scanner.scan(num_threads, num_samples);
 
-    let image = scanner.consumer.render();
+    let (image, min, max) = scanner.consumer.render();
 
     // Create out directory
     std::fs::create_dir_all("out").expect("Failed to create output directory");
 
     let filename = format!("out/scale_{}_{}.png", 5, 6);
     image.save_to_png(&filename).unwrap();
+    let filename = format!("out/scale_{}_{}.txt", 5, 6);
+    let file = File::create(filename).unwrap();
+    let mut writer = BufWriter::new(file);
+    write!(writer, "{} {}", min, max).unwrap();
 
     println!("Done!");
 }

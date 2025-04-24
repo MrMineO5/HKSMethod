@@ -81,11 +81,11 @@ impl<const N: usize> Integrator<N> {
                         if let FinalStabilityResult::UnstableAllowed(StabilityResult::ViolatedReqInit) = result {
                             return IntegrationResult::Invalid;
                         }
-                        IntegrationResult::Broken(self.time_step.log_scale, result)
+                        IntegrationResult::Broken(self.time_step.log_scale - 0.25, result)
                     };
                 }
                 IntegrationStepResult::Perturbativity => {
-                    return IntegrationResult::PerturbativityViolated(self.time_step.log_scale);
+                    return IntegrationResult::PerturbativityViolated(self.time_step.log_scale - 0.25);
                 }
             }
         }

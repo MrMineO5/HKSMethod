@@ -140,7 +140,7 @@ impl<const NX: usize, const NY: usize> Image<NX, NY> {
         }
     }
     
-    pub fn draw_gradient_layer(&mut self, layer: &Layer<(f64, u64), NX, NY>, min_color: u32, max_color: u32) {
+    pub fn draw_gradient_layer(&mut self, layer: &Layer<(f64, u64), NX, NY>, min_color: u32, max_color: u32) -> (f64, f64) {
         let mut values: [[f64; NX]; NY] = [[0.0; NX]; NY];
         let mut max: f64 = f64::NEG_INFINITY;
         let mut min: f64 = f64::INFINITY;
@@ -162,8 +162,6 @@ impl<const NX: usize, const NY: usize> Image<NX, NY> {
                 }
             }
         }
-
-        println!("Gradient Layer: min: {}, max: {}", min, max);
         
         // Extract RGB components of min and max colors
         let min_r = ((min_color >> 16) & 0xFF) as f64;
@@ -192,6 +190,8 @@ impl<const NX: usize, const NY: usize> Image<NX, NY> {
                 self.data[x][y] = (r << 16) | (g << 8) | b;
             }
         }
+
+        (min, max)
     }
 
     pub fn save_to_png(&self, filename: &str) -> Result<(), image::ImageError> {

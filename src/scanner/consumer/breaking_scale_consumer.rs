@@ -20,10 +20,10 @@ impl<const N: usize, const NX: usize, const NY: usize> BreakingScaleConsumer<N, 
         }
     }
 
-    pub fn render(&self) -> Image<NX, NY> {
+    pub fn render(&self) -> (Image<NX, NY>, f64, f64) {
         let mut image = Image::new();
-        image.draw_gradient_layer(&self.breaking_scale, 0x00FF00, 0x0000FF);
-        image
+        let (min, max) = image.draw_gradient_layer(&self.breaking_scale, 0x00FF00, 0x0000FF);
+        (image, min, max)
     }
 }
 impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for BreakingScaleConsumer<N, NX, NY> {

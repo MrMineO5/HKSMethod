@@ -12,6 +12,7 @@ const VEV_EPSILON: f64 = 1E-12;
 pub struct SpecialAllowedConsumer<const N: usize, const NX: usize, const NY: usize> {
     broken_allowed: Vec<Layer<bool, NX, NY>>,
     broken_super: Vec<Layer<bool, NX, NY>>,
+    broken_disallowed: Vec<Layer<bool, NX, NY>>,
 }
 impl<const N: usize, const NX: usize, const NY: usize> SpecialAllowedConsumer<N, NX, NY> {
     pub fn new(ranges: CouplingRanges<N>) -> Self {
@@ -25,11 +26,13 @@ impl<const N: usize, const NX: usize, const NY: usize> SpecialAllowedConsumer<N,
         }
 
         let broken_allowed = matrix.clone();
-        let broken_super = matrix;
+        let broken_super = matrix.clone();
+        let broken_disallowed = matrix;
 
         Self {
             broken_allowed,
             broken_super,
+            broken_disallowed,
         }
     }
 
@@ -39,6 +42,7 @@ impl<const N: usize, const NX: usize, const NY: usize> SpecialAllowedConsumer<N,
             for j in 0..N {
                 images[i][j].draw_boolean_layer(&self.broken_allowed[i*N+j], 0x00FF00);
                 images[i][j].draw_boolean_layer(&self.broken_super[i*N+j], 0x0000FF);
+                images[i][j].draw_boolean_layer(&self.broken_disallowed[i*N+j], 0xFF0000);
             }
         }
         images
@@ -100,6 +104,7 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Speci
                 let index = i * N + j;
                 self.broken_allowed[index].merge(&other.broken_allowed[index]);
                 self.broken_super[index].merge(&other.broken_super[index]);
+                self.broken_disallowed[index].merge(&other.broken_disallowed[index]);
             }
         }
     }

@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, thread};
 use MasterResearchProject::models::main_model::MainModel;
 use MasterResearchProject::scanner::consumer::allowed_consumer::AllowedConsumer;
 use MasterResearchProject::scanner::consumer::special_allowed_consumer::SpecialAllowedConsumer;
@@ -32,8 +32,11 @@ fn main() {
         (-0.5, 0.5),
     ];
 
-    // let num_samples = args[1].parse::<u64>().unwrap();
-    let num_samples = 10000;
+    let num_samples = args[1].parse::<u64>().unwrap();
+    // let num_samples = 10000;
+    let num_threads = thread::available_parallelism()
+        .expect("Failed to get available parallelism")
+        .get();
 
     let consumer: SpecialAllowedConsumer<7, 400, 400> = SpecialAllowedConsumer::new(coupling_ranges);
 
@@ -48,7 +51,7 @@ fn main() {
         consumer
     );
 
-    scanner.scan(12, num_samples);
+    scanner.scan(num_threads, num_samples);
 
     let images = scanner.consumer.render();
 

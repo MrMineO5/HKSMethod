@@ -25,6 +25,12 @@ impl<const N: usize, const NX: usize, const NY: usize> BreakingScaleConsumer<N, 
         let (min, max) = image.draw_gradient_layer(&self.breaking_scale, 0x00FF00, 0x0000FF);
         (image, min, max)
     }
+
+    pub fn render_with_range(&self, min: f64, max: f64) -> Image<NX, NY> {
+        let mut image = Image::new();
+        image.draw_gradient_layer_with_range(&self.breaking_scale, 0x00FF00, 0x0000FF, min, max);
+        image
+    }
 }
 impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for BreakingScaleConsumer<N, NX, NY> {
     fn consume(&mut self, couplings: Couplings<N>, result: IntegrationResult) {

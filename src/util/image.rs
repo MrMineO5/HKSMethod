@@ -175,6 +175,11 @@ impl<const NX: usize, const NY: usize> Image<NX, NY> {
             }
         }
         
+        self.draw_gradient_layer_with_range(layer, min_color, max_color, min, max);
+        (min, max)
+    }
+
+    pub fn draw_gradient_layer_with_range(&mut self, layer: &Layer<(f64, u64), NX, NY>, min_color: u32, max_color: u32, min: f64, max: f64) {
         // Extract RGB components of min and max colors
         let min_r = ((min_color >> 16) & 0xFF) as f64;
         let min_g = ((min_color >> 8) & 0xFF) as f64;
@@ -186,12 +191,14 @@ impl<const NX: usize, const NY: usize> Image<NX, NY> {
         
         for x in 0..NX {
             for y in 0..NY {
-                if values[x][y].is_nan() {
+                let (sum, count) = layer.data[x][y];
+                if count == 0 {
                     continue;
                 }
-                let partial = (values[x][y] - min) / (max - min);
+                let value = sum / count as f64;
+                let partial = (value - min) / (max - min);
                 if partial > 1.0 || partial < 0.0 {
-                    panic!("Partial is out of range: {}", partial);
+                    continue; // Skip values outside the range
                 }
                 
                 // Interpolate each color channel separately
@@ -202,8 +209,6 @@ impl<const NX: usize, const NY: usize> Image<NX, NY> {
                 self.data[x][y] = (r << 16) | (g << 8) | b;
             }
         }
-
-        (min, max)
     }
 
     pub fn draw_color_layer(&mut self, layer: &Layer<u32, NX, NY>) {

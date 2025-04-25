@@ -62,6 +62,18 @@ pub fn average_layer<const NX: usize, const NY: usize>(
     }
 }
 
+pub fn color_layer<const NX: usize, const NY: usize>(
+    range_x: (f64, f64),
+    range_y: (f64, f64),
+) -> Layer<u32, NX, NY> {
+    Layer {
+        data: [[0xFFFFFF; NY]; NX],
+        range_x,
+        range_y,
+        merge_behaviour: |a, b| if *a == 0xFFFFFF { b } else { *a },
+    }
+}
+
 #[derive(Copy, Clone)]
 pub struct Image<const NX: usize, const NY: usize> {
     data: [[u32; NY]; NX],
@@ -192,6 +204,14 @@ impl<const NX: usize, const NY: usize> Image<NX, NY> {
         }
 
         (min, max)
+    }
+
+    pub fn draw_color_layer(&mut self, layer: &Layer<u32, NX, NY>) {
+        for i in 0..NX {
+            for j in 0..NY {
+                self.data[i][j] = layer.data[i][j];
+            }
+        }
     }
 
     pub fn save_to_png(&self, filename: &str) -> Result<(), image::ImageError> {

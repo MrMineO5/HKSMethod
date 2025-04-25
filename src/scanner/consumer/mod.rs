@@ -6,6 +6,7 @@ pub mod stability_consumer;
 pub mod allowed_consumer;
 pub mod threading_consumer;
 pub mod special_allowed_consumer;
+pub mod multi_special_allowed_consumer;
 pub mod breaking_scale_consumer;
 
 pub trait ScanConsumer<const N: usize>: Clone {

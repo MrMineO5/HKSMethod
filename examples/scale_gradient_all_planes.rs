@@ -10,7 +10,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let num_samples = args[1].parse::<u64>().unwrap();
     
-    let point = [0.3, -0.3, 0.1, 0.0, 0.0, 0.0];
+    let point = [0.3, -0.3, 0.1, 0.0, 0.1, -0.05];
     let num_threads = thread::available_parallelism()
         .expect("Failed to get available parallelism")
         .get();

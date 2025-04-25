@@ -7,7 +7,7 @@ use master_research_project::simulation;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    let point = [0.3, -0.3, 0.1, 0.0, 0.0, 0.0];
+    let point = [0.3, -0.3, 0.1, 0.0, 0.1, -0.05];
     let index_x = 5usize;
     let index_y = 6usize;
 

@@ -2,7 +2,7 @@ use crate::model::Couplings;
 use crate::scanner::consumer::ScanConsumer;
 use crate::scanner::scanner::CouplingRanges;
 use crate::simulation::IntegrationResult;
-use crate::util::image::{color_layer, Image, Layer};
+use crate::util::image::{boolean_layer, color_layer, Image, Layer};
 use crate::util::stability::{FinalStabilityResult, StabilityResult};
 
 const VEV_EPSILON: f64 = 1E-12;
@@ -10,15 +10,18 @@ const VEV_EPSILON: f64 = 1E-12;
 #[derive(Clone)]
 pub struct MultiSpecialAllowedConsumer<const N: usize, const NX: usize, const NY: usize> {
     broken_allowed: Box<Layer<u32, NX, NY>>,
+    broken_disallowed: Box<Layer<bool, NX, NY>>,
     index_x: usize,
     index_y: usize,
 }
 impl<const N: usize, const NX: usize, const NY: usize> MultiSpecialAllowedConsumer<N, NX, NY> {
     pub fn new(ranges: CouplingRanges<N>, index_x: usize, index_y: usize) -> Self {
         let broken_allowed = Box::new(color_layer(ranges[index_x], ranges[index_y]));
-
+        let broken_disallowed = Box::new(boolean_layer(ranges[index_x], ranges[index_y]));
+        
         Self {
             broken_allowed,
+            broken_disallowed,
             index_x,
             index_y,
         }
@@ -27,6 +30,7 @@ impl<const N: usize, const NX: usize, const NY: usize> MultiSpecialAllowedConsum
     pub fn render(&self) -> Image<NX, NY> {
         let mut image = Image::new();
         image.draw_color_layer(&self.broken_allowed);
+        image.draw_boolean_layer(&self.broken_disallowed, 0xFF0000);
         image
     }
 }
@@ -65,6 +69,9 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Multi
                             }
                         };
                     }
+                    FinalStabilityResult::UnstableDisallowed(_) => {
+                        self.broken_disallowed.write(couplings_ref[self.index_x], couplings_ref[self.index_y], true);
+                    }
                     _ => {}
                 }
             }
@@ -73,5 +80,6 @@ impl<const N: usize, const NX: usize, const NY: usize> ScanConsumer<N> for Multi
     }
     fn merge(&mut self, other: Self) {
         self.broken_allowed.merge(&other.broken_allowed);
+        self.broken_disallowed.merge(&other.broken_disallowed);
     }
 }

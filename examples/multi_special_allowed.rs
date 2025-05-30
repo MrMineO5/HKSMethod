@@ -1,8 +1,8 @@
 use std::{env, thread};
-use master_research_project::models::main_model::MainModel;
-use master_research_project::scanner::consumer::multi_special_allowed_consumer::MultiSpecialAllowedConsumer;
-use master_research_project::scanner::multi_threaded_scanner::MultiThreadedScanner;
-use master_research_project::simulation;
+use hks_method::models::main_model::MainModel;
+use hks_method::scanner::consumer::multi_special_allowed_consumer::MultiSpecialAllowedConsumer;
+use hks_method::scanner::multi_threaded_scanner::MultiThreadedScanner;
+use hks_method::simulation;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
